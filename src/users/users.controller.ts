@@ -11,6 +11,7 @@ export default class UserController {
   constructor() {
     this.signup = this.signup.bind(this);
     this.signin = this.signin.bind(this);
+    this.signout = this.signout.bind(this);
   }
   async signup(req: Request, res: Response, next: NextFunction) {
     const schema = Joi.object()
@@ -76,6 +77,20 @@ export default class UserController {
           httpOnly: true,
         })
         .send({ message: "로그인이 완료되었습니다." });
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  }
+
+  async signout(req: Request, res: Response, next: NextFunction) {
+    try {
+      res
+        .status(204)
+        .cookie("access_token", "", {
+          maxAge: 0,
+        })
+        .send();
     } catch (error) {
       console.error(error);
       next(error);
