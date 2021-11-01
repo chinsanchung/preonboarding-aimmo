@@ -22,14 +22,15 @@ export default class UserController {
       const { email, name } = req.body;
       let { password } = req.body;
       //회원 가입 중복 체크
-      console.log(`userService  : `, this.userService);
-
       const duplicateEmailCheck = await this.userService.findUserByEmail(email);
       if (duplicateEmailCheck) {
         throw createError(400, "이미 가입되어 있는 이메일 입니다.");
       }
       password = await bcrypt.hash(password, 10);
-      return password;
+      const userInfo = await this.userService.signup(email, password, name);
+      res
+        .status(201)
+        .send({ message: "가입이 완료되었습니다.", data: userInfo });
     } catch (error) {
       console.error(error);
       next(error);

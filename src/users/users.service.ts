@@ -1,3 +1,4 @@
+import UserModel from "../model/users.model";
 export class UserService {
   public async findUserByEmail(email: string): Promise<any | null> {
     return;
@@ -8,6 +9,10 @@ export class UserService {
     password: string,
     name: string
   ): Promise<any> {
-    return;
+    return await UserModel.create({
+      email,
+      password,
+      name,
+    });
   }
 }
