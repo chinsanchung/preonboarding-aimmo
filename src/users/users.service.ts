@@ -1,18 +1,21 @@
-import UserModel from "../model/users.model";
+import { IUser, UserModel } from "../model/users.model";
 export class UserService {
-  public async findUserByEmail(email: string): Promise<any | null> {
-    return;
+  public async findUserByEmail(email: string): Promise<IUser | null> {
+    return await UserModel.findOne({
+      email,
+    });
   }
 
   public async signup(
     email: string,
     password: string,
     name: string
-  ): Promise<any> {
+  ): Promise<IUser> {
     return await UserModel.create({
       email,
       password,
       name,
+      created_at: Date.now(),
     });
   }
 }
