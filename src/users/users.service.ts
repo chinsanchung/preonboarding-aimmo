@@ -3,7 +3,7 @@ export class UserService {
   public async findUserByEmail(email: string): Promise<IUser | null> {
     return await UserModel.findOne({
       email,
-    });
+    }).lean();
   }
 
   public async signup(
