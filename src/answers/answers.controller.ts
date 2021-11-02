@@ -1,14 +1,11 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Request, Response, NextFunction } from "express";
 import { validate } from "../utils/joiValidate";
-import { CommentsService } from "./comments.service";
+import { AnswersService } from "./answers.service";
 import Joi from "joi";
-import { Types } from "mongoose";
-import createError from "../utils/createError";
-import {} from "mongoose";
 
-export default class commentsController {
-  private commentsService = new CommentsService();
+export default class answersController {
+  private answersService = new AnswersService();
   constructor() {
     this.create = this.create.bind(this);
     this.delete = this.delete.bind(this);
@@ -18,16 +15,18 @@ export default class commentsController {
     const bodySchema = Joi.object().keys({
       contents: Joi.string().required(),
     });
-    const paramsSchema = Joi.object().keys({
-      board_id: Joi.string().required(),
-    });
+    const paramsSchema = Joi.object()
+      .keys({
+        comment_id: Joi.string().required(),
+      })
+      .unknown();
     try {
       validate(bodySchema, req.body);
       validate(paramsSchema, req.params);
       const { contents } = req.body;
-      const { board_id } = req.params;
-      await this.commentsService.writeComment(
-        board_id,
+      const { comment_id } = req.params;
+      await this.answersService.writeAnswer(
+        comment_id,
         // @ts-ignore
         req.user._id,
         contents
@@ -40,16 +39,18 @@ export default class commentsController {
   }
 
   async delete(req: Request, res: Response, next: NextFunction) {
-    const paramsSchema = Joi.object().keys({
-      board_id: Joi.string(),
-      coomment_id: Joi.string(),
-    });
+    const paramsSchema = Joi.object()
+      .keys({
+        comment_id: Joi.string(),
+        answersId: Joi.string(),
+      })
+      .unknown();
     try {
       validate(paramsSchema, req.params);
-      const { board_id, coomment_id } = req.params;
-      await this.commentsService.deleteComment(
-        board_id,
-        coomment_id,
+      const { comment_id, answersId } = req.params;
+      await this.answersService.deleteAnswer(
+        comment_id,
+        answersId,
         // @ts-ignore
         req.user._id
       );
@@ -61,16 +62,18 @@ export default class commentsController {
   }
 
   async readAll(req: Request, res: Response, next: NextFunction) {
-    const paramsSchema = Joi.object().keys({
-      board_id: Joi.string().required(),
-    });
+    const paramsSchema = Joi.object()
+      .keys({
+        comment_id: Joi.string().required(),
+      })
+      .unknown();
     try {
       validate(paramsSchema, req.params);
       const limit = req.query.limit ? Number(req.query.limit) : 10;
       const offset = req.query.page ? (Number(req.query.page) - 1) * limit : 0;
-      const { board_id } = req.params;
-      const response = await this.commentsService.commentList(
-        board_id,
+      const { comment_id } = req.params;
+      const response = await this.answersService.AnswerList(
+        comment_id,
         limit,
         offset
       );
