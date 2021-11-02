@@ -10,6 +10,7 @@ export default class BoardController {
   constructor() {
     this.create = this.create.bind(this);
     this.update = this.update.bind(this);
+    this.delete = this.delete.bind(this);
   }
 
   async create(req: Request, res: Response, next: NextFunction) {
@@ -49,6 +50,35 @@ export default class BoardController {
         updateQuery: req.body,
       });
       return res.status(201).send({ message: "수정을 완료했습니다." });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async update(req: Request, res: Response, next: NextFunction) {
+    const { board_id } = req.params;
+    try {
+      await this.boardService.update({
+        //@ts-ignore
+        user_id: req.user._id,
+        board_id,
+        updateQuery: req.body,
+      });
+      return res.status(201).send({ message: "수정을 완료했습니다." });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async delete(req: Request, res: Response, next: NextFunction) {
+    const { board_id } = req.params;
+    try {
+      await this.boardService.delete({
+        //@ts-ignore
+        user_id: req.user._id,
+        board_id,
+      });
+      return res.status(201).send({ message: "삭제를 완료했습니다." });
     } catch (error) {
       next(error);
     }
