@@ -2,8 +2,9 @@
 import { Request, Response, NextFunction } from "express";
 import Joi from "joi";
 import { validate } from "../utils/joiValidate";
+
+import Log from "../utils/debugger";
 import { BoardService } from "./boards.service";
-import createError from "../utils/createError";
 
 export default class BoardController {
   private boardService = new BoardService();
@@ -11,6 +12,8 @@ export default class BoardController {
     this.create = this.create.bind(this);
     this.readOne = this.readOne.bind(this);
     this.readAll = this.readAll.bind(this);
+    this.update = this.update.bind(this);
+    this.delete = this.delete.bind(this);
   }
 
   async create(req: Request, res: Response, next: NextFunction) {
@@ -34,7 +37,51 @@ export default class BoardController {
         .status(201)
         .send({ message: "게시글을 생성했습니다.", data: board });
     } catch (error) {
-      console.error(error);
+      Log.error(error);
+      next(error);
+    }
+  }
+
+  async update(req: Request, res: Response, next: NextFunction) {
+    const { board_id } = req.params;
+    try {
+      await this.boardService.update({
+        //@ts-ignore
+        user_id: req.user._id,
+        board_id,
+        updateQuery: req.body,
+      });
+      return res.status(201).send({ message: "수정을 완료했습니다." });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async update(req: Request, res: Response, next: NextFunction) {
+    const { board_id } = req.params;
+    try {
+      await this.boardService.update({
+        //@ts-ignore
+        user_id: req.user._id,
+        board_id,
+        updateQuery: req.body,
+      });
+      return res.status(201).send({ message: "수정을 완료했습니다." });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async delete(req: Request, res: Response, next: NextFunction) {
+    const { board_id } = req.params;
+    try {
+      await this.boardService.delete({
+        //@ts-ignore
+        user_id: req.user._id,
+        board_id,
+      });
+      return res.status(201).send({ message: "삭제를 완료했습니다." });
+    } catch (error) {
       next(error);
     }
   }
