@@ -3,15 +3,19 @@
 ### 이현준(팀장)
 
 - 개발 환경 셋팅
-- 각자한것
+- 유저 생성
+- 로그인, 로그아웃
+- 댓글, 대댓글 조회, 수정, 등록, 삭제
 
 ### 박상현
 
-- 각자 한것
+-
 
 ### 정진산
 
-- 각자 한것
+- 게시글 등록, 수정 및 삭제
+- 미들웨어(jwt) 인증 구현
+- 배포
 
 ### 김태련
 
@@ -41,7 +45,7 @@
 
 ## **배포주소**
 
--
+- https://nodeswork-boards-server.herokuapp.com/
 
 ## **기능구현**
 
@@ -55,8 +59,6 @@
 - Rest API 설계 - _완료_
 - Unit Test - _미완료_
 - 1000만건 이상의 데이터를 넣고 성능테스트 진행 결과 필요 - _미완료_
-
-## **디렉토리 구조**
 
 ## **설치 및 실행 방법**
 
@@ -272,9 +274,11 @@ npm start
 }
 ```
 
+### 현준님 api(https://documenter.getpostman.com/view/15323948/UV5ddEGU)
+
 ### **TIL 블로그 주소**
 
-- [이현준] 여기주소
+- [이현준] (https://supiz.tistory.com/)
 - [박상현]
-- [정진산]
+- [정진산] (https://chinsanchung.github.io/)
 - [김태련] (https://velog.io/@code-link)
