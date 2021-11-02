@@ -1,29 +1,20 @@
 import { Schema, model, Types } from "mongoose";
 
-interface IAnswersArray {
-  user_id: Types.ObjectId;
-  contents: string;
-  created_at: Date;
-  deleted_at?: Date;
-}
 interface IAnswers {
-  comment_id: Types.ObjectId;
-  answers_array: IAnswersArray[];
+  contents: string;
+  user_id: Types.ObjectId;
+  created_at: Date;
+  deleted_at?: Date | null;
 }
 
-const answersArraySchema = new Schema<IAnswersArray>(
+const schema = new Schema<IAnswers>(
   {
-    user_id: { type: Schema.Types.ObjectId, ref: "users", required: true },
     contents: { type: String, default: "" },
-    deleted_at: { type: Date },
+    user_id: { type: Schema.Types.ObjectId, ref: "users", required: true },
+    deleted_at: { type: Date, default: null },
   },
   { timestamps: { createdAt: "created_at" } }
 );
-
-const schema = new Schema<IAnswers>({
-  comment_id: { type: Schema.Types.ObjectId, ref: "comments", required: true },
-  answers_array: { type: [answersArraySchema], default: [] },
-});
 
 const AnswersModel = model<IAnswers>("answers", schema);
 

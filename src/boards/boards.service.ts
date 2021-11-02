@@ -65,13 +65,12 @@ export class BoardService {
       } catch (error) {
         throw createError(500, "수정에 에러가 발생했습니다.");
       }
-
     }
   }
   async delete({ user_id, board_id }: { user_id: string; board_id: string }) {
     const hasValidToEdit = await this.checkAuthToBoard({ user_id, board_id });
     if (!hasValidToEdit.ok) {
-      throw createError(402, hasValidToEdit?.error || "에러가 발생했습니아.");
+      throw createError(402, hasValidToEdit?.error || "에러가 발생했습니다.");
     } else {
       try {
         await BoardModel.updateOne(
@@ -84,9 +83,6 @@ export class BoardService {
       } catch (error) {
         throw createError(500, "삭제에 에러가 발생했습니다.");
       }
-
-      Log.error("error");
-      throw error;
     }
   }
 }
