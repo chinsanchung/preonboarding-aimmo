@@ -2,6 +2,7 @@
 import { Request, Response, NextFunction } from "express";
 import Joi from "joi";
 import { validate } from "../utils/joiValidate";
+import Log from "../utils/debugger";
 import { BoardService } from "./boards.service";
 
 export default class BoardController {
@@ -34,7 +35,22 @@ export default class BoardController {
         .status(201)
         .send({ message: "게시글을 생성했습니다.", data: board });
     } catch (error) {
-      console.error(error);
+      Log.error(error);
+      next(error);
+    }
+  }
+
+  async update(req: Request, res: Response, next: NextFunction) {
+    const { board_id } = req.params;
+    try {
+      await this.boardService.update({
+        //@ts-ignore
+        user_id: req.user._id,
+        board_id,
+        updateQuery: req.body,
+      });
+      return res.status(201).send({ message: "수정을 완료했습니다." });
+    } catch (error) {
       next(error);
     }
   }
