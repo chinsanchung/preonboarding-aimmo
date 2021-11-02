@@ -6,5 +6,7 @@ const router = Router();
 const controller = new BoardController();
 
 router.post("/", verifyUser, controller.create);
+router.patch("/:board_id", verifyUser, controller.update);
+router.delete("/:board_id", verifyUser, controller.delete);
 
 export default router;
