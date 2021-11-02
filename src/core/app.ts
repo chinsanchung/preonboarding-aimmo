@@ -32,6 +32,9 @@ app.use(cookieParser(COOKIE_SECRET));
 //route
 app.use("/", routes);
 
+app.get("/", (req: Request, res: Response, next: NextFunction) => {
+  res.send("nodeswork_boards_server")
+});
 // catch 404 and forward to error handler
 app.use((req: Request, res: Response, next: NextFunction) => {
   res.status(404).json("ERR_NOT_FOUND");
