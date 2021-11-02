@@ -1,5 +1,6 @@
 import { IBoard, BoardModel } from "../model/boards.model";
 import { ICreateBoardDto } from "./boards.interface";
+import Log from "../utils/debugger";
 
 export class BoardService {
   constructor() {
@@ -9,10 +10,9 @@ export class BoardService {
   async create(createQuery: ICreateBoardDto): Promise<IBoard> {
     try {
       const response = await BoardModel.create(createQuery);
-      console.log(response);
       return response;
     } catch (error) {
-      console.log("error");
+      Log.error("error");
       throw error;
     }
   }
