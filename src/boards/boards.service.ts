@@ -28,7 +28,6 @@ export class BoardService {
       const board = await BoardModel.findOne({ _id: board_id })
         .select('user_id deleted_at')
         .lean();
-      // console.log("board: ", board);
       if (!board) return { ok: false, error: '일치하는 글이 없습니다.' };
       if (Object.prototype.hasOwnProperty.call(board, 'deleted_at')) {
         return { ok: false, error: '이미 삭제한 게시글입니다.' };
@@ -39,7 +38,7 @@ export class BoardService {
         return { ok: false, error: '오직 작성자만 글에 접근할 수 있습니다.' };
       }
     } catch (error) {
-      // console.log("check board auth error", error);
+      Log.error('인증 실패');
       return { ok: false, error: '인증 실패' };
     }
   }
@@ -112,21 +111,24 @@ export class BoardService {
     { $unwind: '$userInfo' },
   ];
 
-  async readOne(id: string) {
-    Log.info('id: ', id);
-    const post = await BoardModel.findOne({ _id: id });
-    if (!post?.view_cnt.find((obj) => obj.user_id.equals(user_id))) {
-      await BoardModel.updateOne(
-        { _id: id },
-        {
-          $push: { view_cnt: { user_id: user_id, view_date: new Date() } },
-        }
-      );
+  async readOne(query: { board_id: string; user_id?: string }) {
+    const board_id = query.board_id;
+    if (query?.user_id) {
+      const user_id = query.user_id;
+      const post = await BoardModel.findOne({ _id: board_id });
+      if (!post?.view_cnt.find((obj) => obj.user_id.equals(user_id))) {
+        await BoardModel.updateOne(
+          { _id: board_id },
+          {
+            $push: { view_cnt: { user_id: user_id, view_date: new Date() } },
+          }
+        );
+      }
     }
     try {
       // return await BoardModel.findOne({ _id: id });
       // 출처: https://stackoverflow.com/a/38946553
-      const _id = new mongoose.Types.ObjectId(id);
+      const _id = new mongoose.Types.ObjectId(board_id);
       const response = await BoardModel.aggregate([
         { $match: { _id } },
         ...this.writerInfoQuery,
@@ -210,7 +212,7 @@ export class BoardService {
 
       return { count, data: response };
     } catch (error) {
-      console.log('error');
+      Log.error('error');
       throw error;
     }
   }
