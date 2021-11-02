@@ -1,7 +1,7 @@
 import { Schema, model, Types } from "mongoose";
 
 interface IViewCnt {
-  member_id: Types.ObjectId;
+  user_id: Types.ObjectId;
   view_date: Date;
 }
 interface IBoard {
@@ -16,7 +16,7 @@ interface IBoard {
 
 const viewCntSchema = new Schema<IViewCnt>(
   {
-    member_id: { type: Schema.Types.ObjectId, ref: "users", required: true },
+    user_id: { type: Schema.Types.ObjectId, ref: "users", required: true },
   },
   { _id: false, timestamps: { createdAt: "view_date" } }
 );
