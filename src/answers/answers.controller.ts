@@ -54,7 +54,7 @@ export default class answersController {
         // @ts-ignore
         req.user._id
       );
-      res.send();
+      res.status(204).send({ message: "댓글을 삭제했습니다." });
     } catch (error) {
       console.error(error);
       next(error);
