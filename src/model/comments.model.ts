@@ -3,7 +3,7 @@ import { Schema, model, Types } from "mongoose";
 interface ICommentsArray {
   user_id: Types.ObjectId;
   contents: string;
-  created_at: Date;
+  created_at?: Date;
   deleted_at?: Date | null;
 }
 interface IComments {
