@@ -43,7 +43,6 @@ export class BoardService {
       const response = await BoardModel.create(createQuery);
       return response;
     } catch (error) {
-      console.log("error");
       throw createError(500, "게시글 작성에 에러가 발생했습니다.");
     }
   }
