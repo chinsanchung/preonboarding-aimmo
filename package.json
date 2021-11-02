@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "pm2 start build/index.js --time --restart-delay=5000 --name 'nodeswork_boards_server' --watch",
+    "start":  "node build/index.js",
     "dev": "cross-env NODE_ENV=development DEBUG=\"info,error\" tsnd src/index.ts",
     "build": "sudo tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
