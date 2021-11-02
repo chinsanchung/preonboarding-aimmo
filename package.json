@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "pm2 start build/index.js --time --restart-delay=5000 --name 'nodeswork_boards_server' --watch",
-    "dev": "tsnd src/index.ts",
-    "build": "sudo tsc",
+    "start": "node build/index.js",
+    "dev": "cross-env NODE_ENV=development DEBUG=\"info,error\" tsnd src/index.ts",
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -23,18 +23,24 @@
     "bcrypt": "^5.0.1",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
+    "debug": "^4.3.2",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "helmet": "^4.6.0",
     "http-errors": "^1.8.0",
+    "joi": "^17.4.2",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.0.12",
     "morgan": "^1.10.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
+    "@types/cookie-parser": "^1.4.2",
+    "@types/debug": "^4.1.7",
     "@types/dotenv": "^8.2.0",
     "@types/express": "^4.17.13",
+    "@types/http-errors": "^1.8.1",
     "@types/jsonwebtoken": "^8.5.5",
     "@types/morgan": "^1.9.3",
     "@types/node": "^16.11.6",
