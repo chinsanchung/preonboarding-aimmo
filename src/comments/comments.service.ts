@@ -20,16 +20,27 @@ export class CommentsService {
     boardInfo?.save();
   }
 
-  public async deleteComment( 
+  public async deleteComment(
     boardId: Types.ObjectId,
     commentId: Types.ObjectId
   ): Promise<void> {
     const commentInfo = await CommentsModel.updateOne(
       {
         board_id: boardId,
-        comments_array: { $elemMatch: { _id: commentId } },
       },
-      { $set: { deleted_at: Date.now() } }
+      {
+        $set: {
+          "comments_array.$[elem1].deleted_at": new Date(),
+        },
+      },
+      {
+        arrayFilters: [
+          {
+            "elem1._id": commentId,
+          },
+        ],
+      }
     );
+
   }
 }

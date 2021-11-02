@@ -47,7 +47,7 @@ export default class commentsController {
       validate(paramsSchema, req.params);
       await this.commentsService.deleteComment(
         new Types.ObjectId("6180a767248e314deac39bec"),
-        new Types.ObjectId("6180b14035a2b7348dfc95f5")
+        new Types.ObjectId("6180b5915209d9a387ad2c73")
       );
       res.send()
     } catch (error) {
