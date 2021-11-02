@@ -2,7 +2,7 @@
 import { Request, Response, NextFunction } from "express";
 import Joi from "joi";
 import { validate } from "../utils/joiValidate";
-import bcrypt from "bcrypt";
+import Log from "../utils/debugger";
 import { BoardService } from "./boards.service";
 import createError from "../utils/createError";
 
@@ -26,7 +26,7 @@ export default class BoardController {
         //@ts-ignore
         user_id: req.user._id,
       };
-      console.log("BODY: ", createQuery);
+      Log.info("BODY: ", createQuery);
       validate(schema, req.body);
       const board = await this.boardService.create(createQuery);
 
@@ -34,7 +34,7 @@ export default class BoardController {
         .status(201)
         .send({ message: "게시글을 생성했습니다.", data: board });
     } catch (error) {
-      console.error(error);
+      Log.error(error);
       next(error);
     }
   }
