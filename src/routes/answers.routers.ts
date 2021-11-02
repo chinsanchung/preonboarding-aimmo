@@ -1,12 +1,12 @@
 import { Router } from "express";
 import verifyUser from "../middlewares/verifyUser";
-import CommentsController from "../comments/comments.controller";
+import AnswersController from "../answers/answers.controller";
 
 const router = Router({ mergeParams: true });
-const controller = new CommentsController();
+const controller = new AnswersController();
 
 router.get("/", controller.readAll);
 router.post("/", verifyUser, controller.create);
-router.delete("/:coomment_id", verifyUser, controller.delete);
+router.delete("/:answersId", verifyUser, controller.delete);
 
 export default router;
