@@ -31,7 +31,7 @@ export default class commentsController {
         req.user._id,
         contents
       );
-      res.status(201).send({ message: "댓글을 생성했습니다."});
+      res.status(201).send({ message: "댓글을 생성했습니다." });
     } catch (error) {
       console.error(error);
       next(error);
@@ -40,16 +40,19 @@ export default class commentsController {
 
   async delete(req: Request, res: Response, next: NextFunction) {
     const paramsSchema = Joi.object().keys({
-      boardsId: Joi.string(),
+      board_id: Joi.string(),
       coommentsId: Joi.string(),
     });
     try {
       validate(paramsSchema, req.params);
+      const { board_id, coommentsId } = req.params;
       await this.commentsService.deleteComment(
-        new Types.ObjectId("6180a767248e314deac39bec"),
-        new Types.ObjectId("6180b5915209d9a387ad2c73")
+        board_id,
+        coommentsId,
+        // @ts-ignore
+        req.user._id
       );
-      res.send()
+      res.send();
     } catch (error) {
       console.error(error);
       next(error);
