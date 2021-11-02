@@ -1,11 +1,18 @@
+## 소개
+[프리온보딩 백엔드 코스](https://www.wanted.co.kr/events/pre_onboarding_course_4) 1주차 과제 입니다.
+
 ## **팀 구성원**
 
 ### 이현준(팀장)
 
 - 개발 환경 셋팅
-- 유저 생성
-- 로그인, 로그아웃
-- 댓글, 대댓글 조회, 수정, 등록, 삭제
+- 개발 일정 관리
+- 회원가입
+- 로그인
+- 로그아웃
+- 댓글 - 조회, 등록, 삭제
+- 대댓글 - 조회, 등록, 삭제
+- 배포
 
 ### 박상현
 
@@ -13,7 +20,9 @@
 
 ### 정진산
 
-- 게시글 등록, 수정 및 삭제
+- 게시글 조회, 등록, 수정, 삭제,검
+- mongoDB세팅
+- schema 정의
 - 미들웨어(jwt) 인증 구현
 - 배포
 
@@ -25,6 +34,9 @@
 #### 공통
 
 - 디비설계, READNE.md 작성
+
+## **디비 설계**
+![](https://github.com/lhj0621/imagetemp/blob/master/2021-11-03%2004;10;50.PNG?raw=true)
 
 ## **과제 내용**
 
@@ -75,6 +87,9 @@ npm start
 
 ## <mark>API 테스트 방법
 
+### 포스트맨 doc
+#### [링크](https://documenter.getpostman.com/view/15323948/UV5ddEGU)
+  
 ### USERS
 
 회원가입, 로그인, 로그아웃을 담당합니다.
@@ -273,8 +288,144 @@ npm start
   "message": "삭제를 완료했습니다."
 }
 ```
+  
+### comments
 
-### 현준님 api(https://documenter.getpostman.com/view/15323948/UV5ddEGU)
+댓글 작성 / 삭제 / 리스트
+
+#### 1. POST /boards/:board_id/comments
+  
+board_id : 게시글의 `_id`
+
+##### request
+
+```javascript
+{
+    "contents": "댓글 내용"
+}
+```
+
+##### response
+
+```javascript
+{
+    "message": "댓글을 생성했습니다."
+}
+```
+#### 2. DELETE /boards/:board_id/comments/:comment_id
+board_id : 게시글의 `_id`
+comment_id : 댓글의 `_id`
+ 
+##### request
+
+
+
+##### response
+
+```javascript
+{
+    "message": "댓글을 삭제했습니다."
+}
+```
+  
+#### 3. GET /boards/:board_id/comments
+board_id : 게시글의 `_id`
+
+
+##### request
+
+
+
+##### response
+
+```javascript
+{
+    "count": 4,
+    "data": [
+        {
+            "_id": "61814e0f0cdc3f8d91edccd8",
+            "board_id": "6180a767248e314deac39bec",
+            "contents": "내용 내용 내용 내용 내용 내용 내용 내용",
+            "created_at": "2021-11-02T14:41:19.303Z",
+            "answers_cnt": 0,
+            "user_name": "원티드"
+        },
+        .
+        .
+        .
+    ]
+}
+```
+  
+### answer
+
+대댓글 작성 / 삭제 / 리스트
+
+#### 1. POST /boards/:board_id/comments/:comment_id/answers
+  
+board_id : 게시글의 `_id`
+comment_id : 댓글의 `_id`
+  
+##### request
+
+```javascript
+{
+    "contents": "대댓글 내용"
+}
+```
+
+##### response
+
+```javascript
+{
+    "message": "댓글을 생성했습니다."
+}
+```
+#### 2. DELETE /boards/:board_id/comments/:comment_id/answers/:answer_id
+  
+board_id : 게시글의 `_id`
+comment_id : 댓글의 `_id`
+answer_id : 대댓글의 `_id`  
+##### request
+
+
+
+##### response
+
+```javascript
+{
+    "message": "댓글을 삭제했습니다."
+}
+```
+  
+#### 3. GET /boards/:board_id/comments/:comment_id/answers
+board_id : 게시글의 `_id`
+comment_id : 댓글의 `_id`
+  
+##### request
+
+
+
+##### response
+
+```javascript
+{
+    "count": 2,
+    "data": [
+        {
+            "_id": "618171ebe6138977a731749c",
+            "comment_id": "6181478e812f0f65694ab75c",
+            "contents": "내용 내용 내용 내용 내용 내용 내용 내용",
+            "created_at": "2021-11-02T17:14:19.948Z",
+            "user_name": "원티드"
+        },
+        .
+        .
+        .
+    ]
+}
+```
+
 
 ### **TIL 블로그 주소**
 
