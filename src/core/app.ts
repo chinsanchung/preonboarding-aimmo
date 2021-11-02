@@ -3,10 +3,12 @@ import morgan from "morgan";
 import path = require("path");
 import helmet from "helmet";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 import routes from "../routes";
 import database from "./database";
 
 const app = express();
+const COOKIE_SECRET = "secret";
 
 dotenv.config();
 
@@ -25,6 +27,7 @@ app.use(
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser(COOKIE_SECRET));
 
 //route
 app.use("/", routes);
