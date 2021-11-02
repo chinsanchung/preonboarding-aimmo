@@ -13,7 +13,9 @@ module.exports = {
     },
     ignorePatterns: ['.eslintrc.js'],
     rules: {
-        'prettier/prettier': 'warn',
+        'prettier/prettier': ['warn', {
+            endOfLine: 'auto',
+        }],
         "@typescript-eslint/no-unused-vars": 'off',
         "@typescript-eslint/explicit-module-boundary-types": "off",
         "@typescript-eslint/no-explicit-any":"off"
