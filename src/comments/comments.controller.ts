@@ -11,6 +11,7 @@ export default class commentsController {
   private commentsService = new CommentsService();
   constructor() {
     this.create = this.create.bind(this);
+    this.delete = this.delete.bind(this);
   }
   async create(req: Request, res: Response, next: NextFunction) {
     const bodySchema = Joi.object().keys({
@@ -30,7 +31,28 @@ export default class commentsController {
         req.user._id,
         contents
       );
-      res.status(201).send({ message: "댓글을 생성했습니다."});
+      res.status(201).send({ message: "댓글을 생성했습니다." });
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  }
+
+  async delete(req: Request, res: Response, next: NextFunction) {
+    const paramsSchema = Joi.object().keys({
+      board_id: Joi.string(),
+      coommentsId: Joi.string(),
+    });
+    try {
+      validate(paramsSchema, req.params);
+      const { board_id, coommentsId } = req.params;
+      await this.commentsService.deleteComment(
+        board_id,
+        coommentsId,
+        // @ts-ignore
+        req.user._id
+      );
+      res.send();
     } catch (error) {
       console.error(error);
       next(error);
