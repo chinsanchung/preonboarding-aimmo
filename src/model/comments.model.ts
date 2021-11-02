@@ -1,7 +1,7 @@
 import { Schema, model, Types } from "mongoose";
 
 interface ICommentsArray {
-  member_id: Types.ObjectId;
+  user_id: Types.ObjectId;
   contents: string;
   created_at: Date;
   deleted_at?: Date | null;
@@ -13,7 +13,7 @@ interface IComments {
 
 const commentsArraySchema = new Schema<ICommentsArray>(
   {
-    member_id: { type: Schema.Types.ObjectId, ref: "users", required: true },
+    user_id: { type: Schema.Types.ObjectId, ref: "users", required: true },
     contents: { type: String, default: "" },
     deleted_at: { type: Date, default: null },
   },
