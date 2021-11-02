@@ -1,6 +1,7 @@
 import { Schema, model, Types } from "mongoose";
 
 interface IAnswers {
+  comment_id: Types.ObjectId;
   contents: string;
   user_id: Types.ObjectId;
   created_at: Date;
@@ -9,6 +10,7 @@ interface IAnswers {
 
 const schema = new Schema<IAnswers>(
   {
+    comment_id: { type: Schema.Types.ObjectId, ref: "comments", required: true },
     contents: { type: String, default: "" },
     user_id: { type: Schema.Types.ObjectId, ref: "users", required: true },
     deleted_at: { type: Date, default: null },
