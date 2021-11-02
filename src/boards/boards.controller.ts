@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Request, Response, NextFunction } from "express";
-import Joi, { number } from "joi";
+import Joi from "joi";
 import { validate } from "../utils/joiValidate";
-import bcrypt from "bcrypt";
 import { BoardService } from "./boards.service";
 import createError from "../utils/createError";
 
@@ -28,7 +27,6 @@ export default class BoardController {
         //@ts-ignore
         user_id: req.user._id,
       };
-      console.log("BODY: ", createQuery);
       validate(schema, req.body);
       const board = await this.boardService.create(createQuery);
 
@@ -43,26 +41,19 @@ export default class BoardController {
 
   async readAll(req: Request, res: Response, next: NextFunction) {
     try {
-      const page: string = req.query.page as string;
+      const limit = req.query.limit ? Number(req.query.limit) : 20;
+      const offset = req.query.page ? (Number(req.query.page) - 1) * limit : 0;
       const title: string = req.query.title as string;
       const contents: string = req.query.contents as string;
-      const valid = ["page", "title", "contents"];
+      // const valid = ["page", "title", "contents"];
+      const response = await this.boardService.readAll(
+        title,
+        contents,
+        limit,
+        offset
+      );
 
-      if (!page) {
-        next(createError(403, "유효한 인수를 입력해주세요"));
-      } else {
-        if (parseInt(page) < 1) {
-          next(createError(403, "유효한 인수를 입력해주세요"));
-        } else {
-          const response = await this.boardService.readAll(
-            parseInt(page) - 1,
-            title,
-            contents
-          );
-
-          return res.status(200).send(response);
-        }
-      }
+      return res.status(200).send(response);
     } catch (error) {
       console.error(error);
       next(error);
@@ -70,9 +61,13 @@ export default class BoardController {
   }
 
   async readOne(req: Request, res: Response, next: NextFunction) {
+    const paramsSchema = Joi.object().keys({
+      board_id: Joi.string(),
+    });
     try {
-      console.log("ID: ", req.params.id);
-      const board = await this.boardService.readOne(req.params.id);
+      validate(paramsSchema, req.params);
+      const { board_id } = req.params;
+      const board = await this.boardService.readOne(board_id);
 
       return res.status(200).send(board);
     } catch (error) {
