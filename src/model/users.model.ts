@@ -4,19 +4,20 @@ interface IUser {
   email: string;
   password: string;
   name: string;
-  created_at: Date | number;
-  updated_at?: Date | number;
-  deleted_at?: Date;
+  created_at: Date;
+  updated_at?: Date;
+  deleted_at?: Date | null;
 }
 
-const schema = new Schema<IUser>({
-  email: { type: String, required: true },
-  password: { type: String, required: true },
-  name: { type: String, required: true },
-  created_at: { type: Date, default: Date.now },
-  updated_at: { type: Date, default: Date.now },
-  deleted_at: { type: Date },
-});
+const schema = new Schema<IUser>(
+  {
+    email: { type: String, required: true },
+    password: { type: String, required: true },
+    name: { type: String, required: true },
+    deleted_at: { type: Date, default: null },
+  },
+  { timestamps: { createdAt: "created_at", updatedAt: "updated_at" } }
+);
 
 const UserModel = model<IUser>("users", schema);
 

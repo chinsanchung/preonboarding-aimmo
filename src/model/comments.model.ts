@@ -3,20 +3,22 @@ import { Schema, model, Types } from "mongoose";
 interface ICommentsArray {
   member_id: Types.ObjectId;
   contents: string;
-  created_at: Date | number;
-  deleted_at?: Date;
+  created_at: Date;
+  deleted_at?: Date | null;
 }
 interface IComments {
   board_id: Types.ObjectId;
   comments_array: ICommentsArray[];
 }
 
-const commentsArraySchema = new Schema<ICommentsArray>({
-  member_id: { type: Schema.Types.ObjectId, ref: "users", required: true },
-  contents: { type: String, default: "" },
-  created_at: { type: Date, default: Date.now },
-  deleted_at: { type: Date },
-});
+const commentsArraySchema = new Schema<ICommentsArray>(
+  {
+    member_id: { type: Schema.Types.ObjectId, ref: "users", required: true },
+    contents: { type: String, default: "" },
+    deleted_at: { type: Date, default: null },
+  },
+  { timestamps: { createdAt: "created_at" } }
+);
 
 const schema = new Schema<IComments>({
   board_id: { type: Schema.Types.ObjectId, ref: "boards", required: true },
