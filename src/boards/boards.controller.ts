@@ -43,8 +43,16 @@ export default class BoardController {
   }
 
   async update(req: Request, res: Response, next: NextFunction) {
+    const schema = Joi.object()
+      .keys({
+        title: Joi.string(),
+        contents: Joi.string(),
+        category: Joi.string(),
+      })
+      .or("title", "contents", "category");
     const { board_id } = req.params;
     try {
+      validate(schema, req.body);
       await this.boardService.update({
         //@ts-ignore
         user_id: req.user._id,
