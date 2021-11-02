@@ -56,22 +56,6 @@ export default class BoardController {
       next(error);
     }
   }
-
-  async update(req: Request, res: Response, next: NextFunction) {
-    const { board_id } = req.params;
-    try {
-      await this.boardService.update({
-        //@ts-ignore
-        user_id: req.user._id,
-        board_id,
-        updateQuery: req.body,
-      });
-      return res.status(201).send({ message: "수정을 완료했습니다." });
-    } catch (error) {
-      next(error);
-    }
-  }
-
   async delete(req: Request, res: Response, next: NextFunction) {
     const { board_id } = req.params;
     try {
