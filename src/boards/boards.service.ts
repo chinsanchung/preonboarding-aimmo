@@ -1,16 +1,16 @@
-import mongoose from "mongoose";
-import createError from "../utils/createError";
-import { IBoard, BoardModel } from "../model/boards.model";
+import mongoose from 'mongoose';
+import createError from '../utils/createError';
+import { IBoard, BoardModel } from '../model/boards.model';
 
 import {
   ICreateBoardDto,
   IUpdateBoardDto,
   ICheckAuthToBoardInput,
   ICheckAuthToBoardOutput,
-} from "./boards.interface";
+} from './boards.interface';
 
-import Log from "../utils/debugger";
-import { CommentsModel } from "../model/comments.model";
+import Log from '../utils/debugger';
+import { CommentsModel } from '../model/comments.model';
 
 export class BoardService {
   constructor() {
@@ -26,21 +26,20 @@ export class BoardService {
   }: ICheckAuthToBoardInput): Promise<ICheckAuthToBoardOutput> {
     try {
       const board = await BoardModel.findOne({ _id: board_id })
-        .select("user_id deleted_at")
+        .select('user_id deleted_at')
         .lean();
-      // console.log("board: ", board);
-      if (!board) return { ok: false, error: "일치하는 글이 없습니다." };
-      if (Object.prototype.hasOwnProperty.call(board, "deleted_at")) {
-        return { ok: false, error: "이미 삭제한 게시글입니다." };
+      if (!board) return { ok: false, error: '일치하는 글이 없습니다.' };
+      if (Object.prototype.hasOwnProperty.call(board, 'deleted_at')) {
+        return { ok: false, error: '이미 삭제한 게시글입니다.' };
       }
       if (board?.user_id.equals(user_id)) {
         return { ok: true };
       } else {
-        return { ok: false, error: "오직 작성자만 글에 접근할 수 있습니다." };
+        return { ok: false, error: '오직 작성자만 글에 접근할 수 있습니다.' };
       }
     } catch (error) {
-      // console.log("check board auth error", error);
-      return { ok: false, error: "인증 실패" };
+      Log.error('인증 실패');
+      return { ok: false, error: '인증 실패' };
     }
   }
   async create(createQuery: ICreateBoardDto): Promise<IBoard> {
@@ -48,7 +47,7 @@ export class BoardService {
       const response = await BoardModel.create(createQuery);
       return response;
     } catch (error) {
-      throw createError(500, "게시글 작성에 에러가 발생했습니다.");
+      throw createError(500, '게시글 작성에 에러가 발생했습니다.');
     }
   }
   async update({
@@ -58,7 +57,7 @@ export class BoardService {
   }: IUpdateBoardDto): Promise<void> {
     const hasValidToEdit = await this.checkAuthToBoard({ user_id, board_id });
     if (!hasValidToEdit.ok) {
-      throw createError(402, hasValidToEdit?.error || "에러가 발생했습니아.");
+      throw createError(402, hasValidToEdit?.error || '에러가 발생했습니아.');
     } else {
       try {
         await BoardModel.updateOne(
@@ -69,14 +68,14 @@ export class BoardService {
         );
         return;
       } catch (error) {
-        throw createError(500, "수정에 에러가 발생했습니다.");
+        throw createError(500, '수정에 에러가 발생했습니다.');
       }
     }
   }
   async delete({ user_id, board_id }: { user_id: string; board_id: string }) {
     const hasValidToEdit = await this.checkAuthToBoard({ user_id, board_id });
     if (!hasValidToEdit.ok) {
-      throw createError(402, hasValidToEdit?.error || "에러가 발생했습니다.");
+      throw createError(402, hasValidToEdit?.error || '에러가 발생했습니다.');
     } else {
       try {
         await BoardModel.updateOne(
@@ -87,37 +86,49 @@ export class BoardService {
         );
         return;
       } catch (error) {
-        throw createError(500, "삭제에 에러가 발생했습니다.");
+        throw createError(500, '삭제에 에러가 발생했습니다.');
       }
     }
   }
   private writerInfoQuery = [
     {
       $lookup: {
-        from: "users",
-        let: { user_id: "$user_id" },
+        from: 'users',
+        let: { user_id: '$user_id' },
         pipeline: [
-          { $match: { $expr: { $eq: ["$_id", "$$user_id"] } } },
+          { $match: { $expr: { $eq: ['$_id', '$$user_id'] } } },
           {
             $project: {
               _id: 0,
-              email: "$email",
-              name: "$name",
+              email: '$email',
+              name: '$name',
             },
           },
         ],
-        as: "userInfo",
+        as: 'userInfo',
       },
     },
-    { $unwind: "$userInfo" },
+    { $unwind: '$userInfo' },
   ];
 
-  async readOne(id: string) {
-    Log.info("id: ", id);
+  async readOne(query: { board_id: string; user_id?: string }) {
+    const board_id = query.board_id;
+    if (query?.user_id) {
+      const user_id = query.user_id;
+      const post = await BoardModel.findOne({ _id: board_id });
+      if (!post?.view_cnt.find((obj) => obj.user_id.equals(user_id))) {
+        await BoardModel.updateOne(
+          { _id: board_id },
+          {
+            $push: { view_cnt: { user_id: user_id, view_date: new Date() } },
+          }
+        );
+      }
+    }
     try {
       // return await BoardModel.findOne({ _id: id });
       // 출처: https://stackoverflow.com/a/38946553
-      const _id = new mongoose.Types.ObjectId(id);
+      const _id = new mongoose.Types.ObjectId(board_id);
       const response = await BoardModel.aggregate([
         { $match: { _id } },
         ...this.writerInfoQuery,
@@ -126,17 +137,17 @@ export class BoardService {
             _id: 1,
             title: 1,
             contents: 1,
-            view_cnt: { $size: "$view_cnt" },
-            comments_cnt: { $size: "$comments_array" },
+            view_cnt: { $size: '$view_cnt' },
+            comments_cnt: { $size: '$comments_array' },
             created_at: 1,
             comments_array: 1,
-            user_name: "$userInfo.name",
+            user_name: '$userInfo.name',
           },
         },
       ]);
-      Log.info("response: ", response.length);
+      Log.info('response: ', response.length);
       if (response.length === 0) {
-        throw createError(404, "해당하는 글이 없습니다.");
+        throw createError(404, '해당하는 글이 없습니다.');
       } else {
         if (response[0].comments_array.length > 0) {
           const commentsWithUserInfo = await CommentsModel.aggregate([
@@ -148,7 +159,7 @@ export class BoardService {
                 contents: 1,
                 created_at: 1,
                 answers_array: 1,
-                user_name: "$userInfo.name",
+                user_name: '$userInfo.name',
               },
             },
           ]);
@@ -171,11 +182,11 @@ export class BoardService {
     try {
       const andOption: any[] = [{ deleted_at: { $eq: null } }];
       if (title) {
-        const regexTitle = new RegExp(title, "i");
+        const regexTitle = new RegExp(title, 'i');
         andOption.push({ title: regexTitle });
       }
       if (contents) {
-        const regexContents = new RegExp(contents, "i");
+        const regexContents = new RegExp(contents, 'i');
         andOption.push({ contents: regexContents });
       }
       const count = await BoardModel.find({
@@ -191,17 +202,17 @@ export class BoardService {
             _id: 1,
             title: 1,
             contents: 1,
-            view_cnt: { $size: "$view_cnt" },
+            view_cnt: { $size: '$view_cnt' },
             created_at: 1,
-            comments_cnt: { $size: "$comments_array" },
-            user_name: "$userInfo.name",
+            comments_cnt: { $size: '$comments_array' },
+            user_name: '$userInfo.name',
           },
         },
       ]);
 
       return { count, data: response };
     } catch (error) {
-      console.log("error");
+      Log.error('error');
       throw error;
     }
   }

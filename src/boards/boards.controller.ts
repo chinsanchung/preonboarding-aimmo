@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Request, Response, NextFunction } from "express";
-import Joi from "joi";
-import { validate } from "../utils/joiValidate";
+import { Request, Response, NextFunction } from 'express';
+import Joi from 'joi';
+import { validate } from '../utils/joiValidate';
 
-import Log from "../utils/debugger";
-import { BoardService } from "./boards.service";
+import Log from '../utils/debugger';
+import { BoardService } from './boards.service';
 
 export default class BoardController {
   private boardService = new BoardService();
@@ -35,7 +35,7 @@ export default class BoardController {
 
       return res
         .status(201)
-        .send({ message: "게시글을 생성했습니다.", data: board });
+        .send({ message: '게시글을 생성했습니다.', data: board });
     } catch (error) {
       Log.error(error);
       next(error);
@@ -51,7 +51,7 @@ export default class BoardController {
         board_id,
         updateQuery: req.body,
       });
-      return res.status(201).send({ message: "수정을 완료했습니다." });
+      return res.status(201).send({ message: '수정을 완료했습니다.' });
     } catch (error) {
       next(error);
     }
@@ -64,7 +64,7 @@ export default class BoardController {
         user_id: req.user._id,
         board_id,
       });
-      return res.status(201).send({ message: "삭제를 완료했습니다." });
+      return res.status(201).send({ message: '삭제를 완료했습니다.' });
     } catch (error) {
       next(error);
     }
@@ -95,10 +95,19 @@ export default class BoardController {
     const paramsSchema = Joi.object().keys({
       board_id: Joi.string(),
     });
+
     try {
       validate(paramsSchema, req.params);
       const { board_id } = req.params;
-      const board = await this.boardService.readOne(board_id);
+      let query = {
+        board_id,
+      };
+      if (Object.prototype.hasOwnProperty.call(req, 'user')) {
+        Log.info('로그인한 사람.');
+        //@ts-ignore
+        query = { board_id, user_id: req.user._id };
+      }
+      const board = await this.boardService.readOne(query);
 
       return res.status(200).send(board);
     } catch (error) {
