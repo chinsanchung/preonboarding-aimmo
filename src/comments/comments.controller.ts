@@ -17,19 +17,20 @@ export default class commentsController {
       contents: Joi.string().required(),
     });
     const paramsSchema = Joi.object().keys({
-      boardsId: Joi.string(),
+      board_id: Joi.string().required(),
     });
     try {
       validate(bodySchema, req.body);
       validate(paramsSchema, req.params);
       const { contents } = req.body;
+      const { board_id } = req.params;
       await this.commentsService.writeComment(
-        new Types.ObjectId("6180a767248e314deac39bec"),
+        board_id,
         // @ts-ignore
         req.user._id,
         contents
       );
-      res.send();
+      res.status(201).send({ message: "댓글을 생성했습니다."});
     } catch (error) {
       console.error(error);
       next(error);

@@ -7,6 +7,6 @@ const router = Router();
 
 router.use("/users", userRouter);
 router.use("/boards", boardRouter);
-router.use("/boards/:boardsId/comments", commentsRouter);
+router.use("/boards/:board_id/comments", commentsRouter);
 
 export default router;
