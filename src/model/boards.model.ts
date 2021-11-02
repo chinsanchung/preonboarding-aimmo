@@ -13,6 +13,7 @@ interface IBoard {
   created_at: Date;
   updated_at?: Date;
   deleted_at?: Date | null;
+  comments: Schema.Types.ObjectId[];
 }
 
 const viewCntSchema = new Schema<IViewCnt>(
@@ -30,6 +31,11 @@ const schema = new Schema<IBoard>(
     category: { type: String, required: true },
     view_cnt: { type: [viewCntSchema], default: [] },
     deleted_at: { type: Date },
+    comments: {
+      type: [Schema.Types.ObjectId],
+      ref: "comments",
+      default: [],
+    },
   },
   { timestamps: { createdAt: "created_at", updatedAt: "updated_at" } }
 );
