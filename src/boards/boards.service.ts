@@ -21,11 +21,13 @@ export class BoardService {
   }: ICheckAuthToBoardInput): Promise<ICheckAuthToBoardOutput> {
     try {
       const board = await BoardModel.findOne({ _id: board_id })
-        .select("user_id")
+        .select("user_id deleted_at")
         .lean();
       // console.log("board: ", board);
       if (!board) return { ok: false, error: "일치하는 글이 없습니다." };
-
+      if (Object.prototype.hasOwnProperty.call(board, "deleted_at")) {
+        return { ok: false, error: "이미 삭제한 게시글입니다." };
+      }
       if (board?.user_id.equals(user_id)) {
         return { ok: true };
       } else {
@@ -41,7 +43,6 @@ export class BoardService {
       const response = await BoardModel.create(createQuery);
       return response;
     } catch (error) {
-      console.log("error");
       throw createError(500, "게시글 작성에 에러가 발생했습니다.");
     }
   }
