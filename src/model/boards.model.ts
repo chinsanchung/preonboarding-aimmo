@@ -5,6 +5,7 @@ interface IViewCnt {
   view_date: Date;
 }
 interface IBoard {
+  user_id: Types.ObjectId;
   title: string;
   contents: string;
   category: string;
@@ -23,6 +24,7 @@ const viewCntSchema = new Schema<IViewCnt>(
 
 const schema = new Schema<IBoard>(
   {
+    user_id: { type: Schema.Types.ObjectId, ref: "users", required: true },
     title: { type: String, required: true },
     contents: { type: String, required: true },
     category: { type: String, required: true },
