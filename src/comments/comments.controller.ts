@@ -12,6 +12,7 @@ export default class commentsController {
   constructor() {
     this.create = this.create.bind(this);
     this.delete = this.delete.bind(this);
+    this.readAll = this.readAll.bind(this);
   }
   async create(req: Request, res: Response, next: NextFunction) {
     const bodySchema = Joi.object().keys({
@@ -53,6 +54,27 @@ export default class commentsController {
         req.user._id
       );
       res.send();
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  }
+
+  async readAll(req: Request, res: Response, next: NextFunction) {
+    const paramsSchema = Joi.object().keys({
+      board_id: Joi.string().required(),
+    });
+    try {
+      validate(paramsSchema, req.params);
+      const limit = req.query.limit ? Number(req.query.limit) : 10;
+      const offset = req.query.page ? (Number(req.query.page) - 1) * limit : 0;
+      const { board_id } = req.params;
+      const response = await this.commentsService.commentList(
+        board_id,
+        limit,
+        offset
+      );
+      res.status(200).send(response);
     } catch (error) {
       console.error(error);
       next(error);

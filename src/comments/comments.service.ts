@@ -35,4 +35,53 @@ export class CommentsService {
       { $pull: { comments_array: commentId } }
     );
   }
+
+  private writerInfoQuery = [
+    {
+      $lookup: {
+        from: "users",
+        let: { user_id: "$user_id" },
+        pipeline: [
+          { $match: { $expr: { $eq: ["$_id", "$$user_id"] } } },
+          {
+            $project: {
+              _id: 0,
+              email: "$email",
+              name: "$name",
+            },
+          },
+        ],
+        as: "userInfo",
+      },
+    },
+    { $unwind: "$userInfo" },
+  ];
+  public async commentList(
+    boardId: string,
+    limit: number,
+    offset: number
+  ): Promise<{ count: number; data: any[] }> {
+    const _id = new Types.ObjectId(boardId);
+    const count = await CommentsModel.findOne({
+      board_id: _id,
+      deleted_at: { $eq: null },
+    }).countDocuments();
+    const response = await CommentsModel.aggregate([
+      { $match: { $and: [{ board_id: _id }, { deleted_at: { $eq: null } }] } },
+      { $skip: offset },
+      { $limit: limit },
+      ...this.writerInfoQuery,
+      {
+        $project: {
+          _id: 1,
+          board_id: 1,
+          contents: 1,
+          created_at: 1,
+          answers_cnt: { $size: "$answers_array" },
+          user_name: "$userInfo.name",
+        },
+      },
+    ]);
+    return { count, data: response };
+  }
 }
