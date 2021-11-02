@@ -98,7 +98,8 @@ export default class BoardController {
     try {
       validate(paramsSchema, req.params);
       const { board_id } = req.params;
-      const board = await this.boardService.readOne(board_id);
+      //@ts-ignore
+      const board = await this.boardService.readOne(board_id, req.user._id);
 
       return res.status(200).send(board);
     } catch (error) {

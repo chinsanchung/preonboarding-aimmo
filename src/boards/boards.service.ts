@@ -89,9 +89,19 @@ export class BoardService {
     }
   }
 
-  async readOne(id: string): Promise<IBoard | null> {
+  async readOne(id: string, user_id: string): Promise<IBoard | null> {
     try {
-      return await BoardModel.findOne({ _id: id });
+      const post = await BoardModel.findOne({ _id: id });
+      if (!post?.view_cnt.find((obj) => obj.user_id.equals(user_id))) {
+        await BoardModel.updateOne(
+          { _id: id },
+          {
+            $push: { view_cnt: { user_id: user_id, view_date: new Date() } },
+          }
+        );
+        return await BoardModel.findOne({ _id: id });
+      }
+      return post;
     } catch (error) {
       console.log("error");
       throw error;
