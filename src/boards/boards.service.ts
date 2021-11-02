@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import createError from "../utils/createError";
 import { IBoard, BoardModel } from "../model/boards.model";
 
@@ -9,13 +10,15 @@ import {
 } from "./boards.interface";
 
 import Log from "../utils/debugger";
+import { CommentsModel } from "../model/comments.model";
 
 export class BoardService {
   constructor() {
     this.create = this.create.bind(this);
-    this.readOne = this.readOne.bind(this);
-    this.readAll = this.readAll.bind(this);
     this.update = this.update.bind(this);
+    this.delete = this.delete.bind(this);
+    this.readAll = this.readAll.bind(this);
+    this.readOne = this.readOne.bind(this);
   }
   private async checkAuthToBoard({
     user_id,
@@ -88,12 +91,73 @@ export class BoardService {
       }
     }
   }
+  private writerInfoQuery = [
+    {
+      $lookup: {
+        from: "users",
+        let: { user_id: "$user_id" },
+        pipeline: [
+          { $match: { $expr: { $eq: ["$_id", "$$user_id"] } } },
+          {
+            $project: {
+              _id: 0,
+              email: "$email",
+              name: "$name",
+            },
+          },
+        ],
+        as: "userInfo",
+      },
+    },
+    { $unwind: "$userInfo" },
+  ];
 
-  async readOne(id: string): Promise<IBoard | null> {
+  async readOne(id: string) {
+    Log.info("id: ", id);
     try {
-      return await BoardModel.findOne({ _id: id });
+      // return await BoardModel.findOne({ _id: id });
+      // 출처: https://stackoverflow.com/a/38946553
+      const _id = new mongoose.Types.ObjectId(id);
+      const response = await BoardModel.aggregate([
+        { $match: { _id } },
+        ...this.writerInfoQuery,
+        {
+          $project: {
+            _id: 1,
+            title: 1,
+            contents: 1,
+            view_cnt: { $size: "$view_cnt" },
+            comments_cnt: { $size: "$comments_array" },
+            created_at: 1,
+            comments_array: 1,
+            user_name: "$userInfo.name",
+          },
+        },
+      ]);
+      Log.info("response: ", response.length);
+      if (response.length === 0) {
+        throw createError(404, "해당하는 글이 없습니다.");
+      } else {
+        if (response[0].comments_array.length > 0) {
+          const commentsWithUserInfo = await CommentsModel.aggregate([
+            { $match: { _id: { $in: response[0].comments_array } } },
+            ...this.writerInfoQuery,
+            {
+              $project: {
+                _id: 1,
+                contents: 1,
+                created_at: 1,
+                answers_array: 1,
+                user_name: "$userInfo.name",
+              },
+            },
+          ]);
+          return { ...response[0], comments: commentsWithUserInfo };
+        }
+        return { ...response[0], comments: [] };
+      }
     } catch (error) {
-      console.log("error");
+      Log.error(error);
       throw error;
     }
   }
@@ -117,12 +181,24 @@ export class BoardService {
       const count = await BoardModel.find({
         $and: andOption,
       }).countDocuments();
-      const response = await BoardModel.find({
-        $and: andOption,
-      })
-        .skip(offset)
-        .limit(limit)
-        .lean();
+      const response = await BoardModel.aggregate([
+        { $match: { $and: andOption } },
+        { $skip: offset },
+        { $limit: limit },
+        ...this.writerInfoQuery,
+        {
+          $project: {
+            _id: 1,
+            title: 1,
+            contents: 1,
+            view_cnt: { $size: "$view_cnt" },
+            created_at: 1,
+            comments_cnt: { $size: "$comments_array" },
+            user_name: "$userInfo.name",
+          },
+        },
+      ]);
+
       return { count, data: response };
     } catch (error) {
       console.log("error");
