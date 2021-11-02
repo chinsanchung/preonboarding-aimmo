@@ -6,5 +6,6 @@ const router = Router();
 const controller = new BoardController();
 
 router.post("/", verifyUser, controller.create);
+router.patch("/:board_id", verifyUser, controller.update);
 
 export default router;
