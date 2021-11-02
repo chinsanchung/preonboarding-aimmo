@@ -6,5 +6,6 @@ const router = Router();
 const controller = new CommentsController();
 
 router.post("/", verifyUser, controller.create);
+router.delete("/:coommentsId", verifyUser, controller.delete);
 
 export default router;
