@@ -127,10 +127,10 @@ export class BoardService {
             title: 1,
             contents: 1,
             view_cnt: { $size: "$view_cnt" },
+            comments_cnt: { $size: "$comments_array" },
             created_at: 1,
             comments_array: 1,
-            email: "$userInfo.email",
-            name: "$userInfo.name",
+            user_name: "$userInfo.name",
           },
         },
       ]);
@@ -148,8 +148,7 @@ export class BoardService {
                 contents: 1,
                 created_at: 1,
                 answers_array: 1,
-                email: "$userInfo.email",
-                name: "$userInfo.name",
+                user_name: "$userInfo.name",
               },
             },
           ]);
@@ -182,12 +181,24 @@ export class BoardService {
       const count = await BoardModel.find({
         $and: andOption,
       }).countDocuments();
-      const response = await BoardModel.find({
-        $and: andOption,
-      })
-        .skip(offset)
-        .limit(limit)
-        .lean();
+      const response = await BoardModel.aggregate([
+        { $match: { $and: andOption } },
+        { $skip: offset },
+        { $limit: limit },
+        ...this.writerInfoQuery,
+        {
+          $project: {
+            _id: 1,
+            title: 1,
+            contents: 1,
+            view_cnt: { $size: "$view_cnt" },
+            created_at: 1,
+            comments_cnt: { $size: "$comments_array" },
+            user_name: "$userInfo.name",
+          },
+        },
+      ]);
+
       return { count, data: response };
     } catch (error) {
       console.log("error");
