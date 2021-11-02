@@ -1,11 +1,14 @@
 import createError from "../utils/createError";
 import { IBoard, BoardModel } from "../model/boards.model";
+
 import {
   ICreateBoardDto,
   IUpdateBoardDto,
   ICheckAuthToBoardInput,
   ICheckAuthToBoardOutput,
 } from "./boards.interface";
+
+import Log from "../utils/debugger";
 
 export class BoardService {
   constructor() {
@@ -36,7 +39,6 @@ export class BoardService {
   async create(createQuery: ICreateBoardDto): Promise<IBoard> {
     try {
       const response = await BoardModel.create(createQuery);
-      console.log(response);
       return response;
     } catch (error) {
       console.log("error");
@@ -63,6 +65,8 @@ export class BoardService {
       } catch (error) {
         throw createError(500, "수정에 에러가 발생했습니다.");
       }
+      Log.error("error");
+      throw error;
     }
   }
 }

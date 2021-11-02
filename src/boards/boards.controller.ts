@@ -2,6 +2,7 @@
 import { Request, Response, NextFunction } from "express";
 import Joi from "joi";
 import { validate } from "../utils/joiValidate";
+import Log from "../utils/debugger";
 import { BoardService } from "./boards.service";
 
 export default class BoardController {
@@ -33,7 +34,7 @@ export default class BoardController {
         .status(201)
         .send({ message: "게시글을 생성했습니다.", data: board });
     } catch (error) {
-      console.error(error);
+      Log.error(error);
       next(error);
     }
   }
