@@ -13,7 +13,7 @@ interface IBoard {
   created_at: Date;
   updated_at?: Date;
   deleted_at?: Date | null;
-  comments: Schema.Types.ObjectId[];
+  comments_array: Schema.Types.ObjectId[];
 }
 
 const viewCntSchema = new Schema<IViewCnt>(
@@ -31,7 +31,7 @@ const schema = new Schema<IBoard>(
     category: { type: String, required: true },
     view_cnt: { type: [viewCntSchema], default: [] },
     deleted_at: { type: Date },
-    comments: {
+    comments_array: {
       type: [Schema.Types.ObjectId],
       ref: "comments",
       default: [],
