@@ -27,7 +27,7 @@ const schema = new Schema<IBoard>({
   contents: { type: String, required: true },
   category: { type: String, required: true },
   view_cnt: { type: [viewCntSchema], default: [] },
-  created_at: { type: Date, default: Date.now, required: true },
+  created_at: { type: Date, default: Date.now },
   updated_at: { type: Date, default: Date.now },
   deleted_at: { type: Date },
 });
