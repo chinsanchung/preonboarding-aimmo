@@ -3,6 +3,8 @@ import { Schema, model, Types } from "mongoose";
 interface IAnswersArray {
   member_id: Types.ObjectId;
   contents: string;
+  created_at: Date | number;
+  deleted_at?: Date;
 }
 interface IAnswers {
   comment_id: Types.ObjectId;
@@ -12,6 +14,8 @@ interface IAnswers {
 const answersArraySchema = new Schema<IAnswersArray>({
   member_id: { type: Schema.Types.ObjectId, ref: "users", required: true },
   contents: { type: String, default: "" },
+  created_at: { type: Date, default: Date.now, required: true },
+  deleted_at: { type: Date },
 });
 
 const schema = new Schema<IAnswers>({
