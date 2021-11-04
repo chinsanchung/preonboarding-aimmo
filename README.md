@@ -14,9 +14,6 @@
 - 대댓글 - 조회, 등록, 삭제
 - 배포
 
-### 박상현
-
--
 
 ### 정진산
 
@@ -430,6 +427,5 @@ comment_id : 댓글의 `_id`
 ### **TIL 블로그 주소**
 
 - [이현준] (https://supiz.tistory.com/)
-- [박상현]
 - [정진산] (https://chinsanchung.github.io/)
 - [김태련] (https://velog.io/@code-link)
