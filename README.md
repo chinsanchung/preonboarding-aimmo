@@ -1,4 +1,4 @@
-## 프리온보딩 백엔드 과정 1번째 과제 에이모
+## 프리온보딩 백엔드 과정 1번째 과제: 에이모
 
 [에이모](https://aimmo.co.kr)에서 제공해주신 API 설계 과제입니다. 헤로쿠를 이용해 배포했으며, 주소는 [ https://nodeswork-boards-server.herokuapp.com](https://nodeswork-boards-server.herokuapp.com)입니다.
 
@@ -210,4 +210,54 @@ if (!post?.view_cnt.find((obj) => obj.user_id.equals(user_id))) {
     }
   );
 }
+```
+
+## 폴더 구조
+
+```
+.
+├── README.md
+├── package-lock.json
+├── package.json
+├── src
+│   ├── @types
+│   │   └── index.ts
+│   ├── answers
+│   │   ├── answers.controller.ts
+│   │   └── answers.service.ts
+│   ├── boards
+│   │   ├── boards.controller.ts
+│   │   ├── boards.interface.ts
+│   │   └── boards.service.ts
+│   ├── comments
+│   │   ├── comments.controller.ts
+│   │   └── comments.service.ts
+│   ├── config
+│   │   └── config.ts
+│   ├── core
+│   │   ├── app.ts
+│   │   └── database.ts
+│   ├── index.ts
+│   ├── middlewares
+│   │   ├── getUserInfoFromToken.ts
+│   │   └── verifyUser.ts
+│   ├── model
+│   │   ├── answers.model.ts
+│   │   ├── boards.model.ts
+│   │   ├── comments.model.ts
+│   │   └── users.model.ts
+│   ├── routes
+│   │   ├── answers.routers.ts
+│   │   ├── boards.routers.ts
+│   │   ├── comments.routers.ts
+│   │   ├── index.ts
+│   │   └── users.routers.ts
+│   ├── users
+│   │   ├── users.controller.ts
+│   │   └── users.service.ts
+│   └── utils
+│       ├── createError.ts
+│       ├── debugger.ts
+│       └── joiValidate.ts
+└── tsconfig.json
 ```
