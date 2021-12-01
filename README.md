@@ -37,7 +37,7 @@
 **in-memory 가 아닌, 실제 Mongo Atlas 데이터베이스를 연결했기 때문에 로컬에서의 실행을 권장하지 않습니다.**
 
 1. `git clone` 으로 프로젝트를 가져온 후, `npm install` 으로 필요한 패키지를 설치합니다.
-2. 루트 디렉토리에 .env 파일을 생성하고, `MONGO_URI`에 Mongo Atlas 데이터베이스의 connection string 을 기입합니다.
+2. 루트 디렉토리에 .env 파일을 생성하고, `MONGO_URI`에 Mongo Atlas 데이터베이스의 connection string 을, `JWT_SECRET`에 임의의 문자열을 기입합니다.
 3. 개발 환경일 때는`npm run dev`으로, 배포 환경일 때는 `npm run build`으로 빌드한 후 `npm start`을 입력하시면 로컬에서 테스트하실 수 있습니다.
 
 ## 수행한 작업
