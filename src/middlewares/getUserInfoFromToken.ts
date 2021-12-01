@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Request, Response, NextFunction } from 'express';
 import * as jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
 import { UserModel } from '../model/users.model';
-import { jwtConfing } from '../config/config';
+
+dotenv.config();
 
 const getUserInfoFromToken = async (
   req: Request,
@@ -13,7 +15,7 @@ const getUserInfoFromToken = async (
   if (!token) {
     next();
   } else {
-    const data = jwt.verify(token, jwtConfing.secretKey) as unknown;
+    const data = jwt.verify(token, process.env.JWT_SECRET!) as unknown;
 
     // @ts-ignore
     const email = data.email;
